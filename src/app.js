@@ -9,9 +9,15 @@ app.get('/user',(req,res)=>{
     res.send({"First Name": "Chaitanya", "Last Name": "Tupsamudre"});
 })
 
-app.post('/user',(req,res)=>(
-    res.send("Post Api Call")
-));
+app.post('/user',(req,res,next)=>{
+
+    res.send("Post Api Call");
+    next();
+    },
+    (req,res)=>{
+        res.send("2nd Response!!");
+    }
+);
 
 app.delete('/user',(req,res)=>{
     res.send("Delete user");

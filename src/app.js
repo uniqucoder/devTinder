@@ -1,39 +1,38 @@
 
 
 const express = require("express");
-
+const connectDB = require('./config/database');
 const app = express();
-
+const User = require('./models/user')
 const {adminAuth} = require('./middlewares/auth');
+app.use(express.json());
 
-
-app.use("/admin",adminAuth);
-app.get('/admin/getdata',(req,res)=>{
-    res.send("Data sent");
-})
-app.get('/user',(req,res)=>{
-    res.send({"First Name": "Chaitanya", "Last Name": "Tupsamudre"});
-})
-
-app.post('/user',(req,res,next)=>{
-
-    res.send("Post Api Call");
-    next();
-    },
-    (req,res)=>{
-        res.send("2nd Response!!");
+app.post("/signup", async (req,res)=>{
+    try{
+        const data = req.body;
+        const user = new User(data);
+        console.log(data);
+        await user.save();
+        res.send("user added Successfully");
+    }catch(error){
+        console.error("Error saving user:", error);
+        res.status(500).send("Error saving user");
     }
-);
+    
 
-app.delete('/user',(req,res)=>{
-    res.send("Delete user");
+    
 })
 
-
-
-app.use((req,res)=>{
-    res.send("Hello From server!");
+connectDB()
+.then(()=>{
+    console.log('DB connected');
+    app.listen(3000,()=>{
+    console.log('Server is Running');
+    });
 })
-app.listen(3000,()=>{
-    console.log("Server is Successfully Listning on port 3000");
+.catch((err) =>{
+    console.log("Error : DB Connect");
 });
+
+
+

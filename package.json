@@ -2,9 +2,10 @@
   "name": "devtinder",
   "version": "1.0.0",
   "description": "tinder for dev",
-  "main": "index.js",
+  "main": "src/app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon src/app.js"
   },
   "keywords": [
     "nodejs",
@@ -15,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^5.1.0",
-    "mongoose": "^8.14.2"
+    "mongoose": "^8.14.2",
+    "nodemon": "^3.1.10"
   }
 }

@@ -2,23 +2,48 @@ const mongoose = require('mongoose');
 
 const userSchema =  mongoose.Schema ({
     firstName : {
-        type : String
+        type : String,
+        required: true
     },
     lastName : {
         type : String
     },
     emailId : {
-        type: String
+        type: String,
+        lowercase: true,
+        required: true,
+        unique : true
     },
     password :{
-        type: String
+        type: String,
+        required : true
     },
     age : {
-        type: Number
+        type: Number,
+        min: 18
     },
     gender:{
-        type: String
+        type: String,
+        
+        validate(value){
+            if(!(["male","female","other"].includes(value))){
+                throw new Error("Gender is not valid");
+            }
+        }
+    },
+    photourl:{
+        type: String,
+        default:"https://www.dreamstime.com/default-profile-picture-avatar-photo-placeholder-vector-illustration-default-profile-picture-avatar-photo-placeholder-vector-image189495158"
+    },
+    about:{
+        type: String,
+        default: "This is default about of user"
+    },
+    skills: {
+        type : [String]
     }
+},{
+    timestamps: true
 })
 
 const User = mongoose.model("User",userSchema );

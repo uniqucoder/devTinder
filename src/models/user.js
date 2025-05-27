@@ -40,7 +40,12 @@ const userSchema =  mongoose.Schema ({
         default: "This is default about of user"
     },
     skills: {
-        type : [String]
+        type : [String],
+        validate(value){
+            if(value.length > 5){
+                throw new Error("Only 5 skills Allowed");
+            }
+        }
     }
 },{
     timestamps: true

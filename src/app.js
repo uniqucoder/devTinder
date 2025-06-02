@@ -4,9 +4,11 @@ const express = require("express");
 const connectDB = require('./config/database');
 const app = express();
 const User = require('./models/user')
+const validator = require('validator');
 const {adminAuth} = require('./middlewares/auth');
 
 const {validateSignupData} = require('./utils/validator')
+const bcrypt = require('bcrypt');
 
 // middleware to convert JSON to Javascript object
 app.use(express.json());
@@ -16,9 +18,17 @@ app.post("/signup", async (req,res)=>{
         // Validation
         validateSignupData(req);
 
+        const {firstName, lastName, emailId,password} = req.body;
+
+        const passwordHash = await bcrypt.hash(password,10);
+        console.log(passwordHash);
+
+
         // Encrypt the password
         const data = req.body;
-        const user = new User(data);
+        const user = new User({
+            firstName, lastName,emailId, password :passwordHash
+        });
         // console.log(data);
         await user.save();
         res.send("user added Successfully");
@@ -48,8 +58,44 @@ app.get("/user", async(req,res)=>{
 
 })
 
+// login API
+app.post("/login", async(req,res)=>{
+    console.log("Inside login");
+    try{
+
+        const {emailId, password} = req.body;
+        console.log(emailId);
+        if(!validator.isEmail(emailId)){
+
+            throw new Error("Invalid Credentials");
+        }
+
+        // Check User is Present in Database then Password Check
+        const  user = await User.findOne({emailId:emailId});
+        console.log(user);
+        if(!user){
+            throw new Error("Invalid Credentials");
+        }
+
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+
+        if(isPasswordValid){
+            console.log("Password valid");
+            res.send("User Login Successfull");
+        }
+        else{
+            throw new Error("Invalid Credentials");
+        }
+
+    }
+    catch(error){
+        res.status(400).send("Error : "+ error.message);
+    }
+})
+
 // get all user API
-app.get("/feed",async (req,res)=>{
+app.post("/feed",async (req,res)=>{
      try{
         const user = await User.find({});  
         if(user.length === 0){

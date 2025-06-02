@@ -6,19 +6,25 @@ const app = express();
 const User = require('./models/user')
 const {adminAuth} = require('./middlewares/auth');
 
+const {validateSignupData} = require('./utils/validator')
+
 // middleware to convert JSON to Javascript object
 app.use(express.json());
 
 app.post("/signup", async (req,res)=>{
     try{
+        // Validation
+        validateSignupData(req);
+
+        // Encrypt the password
         const data = req.body;
         const user = new User(data);
         // console.log(data);
         await user.save();
         res.send("user added Successfully");
     }catch(error){
-        console.error("Error saving user:", error);
-        res.status(500).send(error.errmsg);
+        console.error("Error :", error);
+        res.status(500).send("Error :"+ error.message);
     }
     
 
@@ -85,6 +91,7 @@ app.patch("/user/:userid", async (req,res)=>{
         if(data?.skills.length > 10){
             throw new Error ("Skills cant me more than 10");
         }
+        
         await User.findByIdAndUpdate({_id: userId}, data,{
             returnDocument:"after",
             runValidators: true

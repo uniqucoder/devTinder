@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const validator = require('validator');
 const userSchema =  mongoose.Schema ({
     firstName : {
         type : String,
@@ -12,7 +12,12 @@ const userSchema =  mongoose.Schema ({
         type: String,
         lowercase: true,
         required: true,
-        unique : true
+        unique : true,
+        validate(value){
+            if(!validator.isEmail(value)){
+                throw new Error("Email is not valid!" + value);
+            }
+        }
     },
     password :{
         type: String,
@@ -33,7 +38,12 @@ const userSchema =  mongoose.Schema ({
     },
     photourl:{
         type: String,
-        default:"https://www.dreamstime.com/default-profile-picture-avatar-photo-placeholder-vector-illustration-default-profile-picture-avatar-photo-placeholder-vector-image189495158"
+        default:"https://www.dreamstime.com/default-profile-picture-avatar-photo-placeholder-vector-illustration-default-profile-picture-avatar-photo-placeholder-vector-image189495158",
+        validate(value){
+            if(!validator.isURL(value)){
+                throw new Error("URL is not valid!" + value);
+            }
+        }
     },
     about:{
         type: String,

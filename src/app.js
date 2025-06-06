@@ -19,7 +19,7 @@ app.use(cookieParser());
 app.post("/signup", async (req,res)=>{
     try{
         // Validation
-        validateSignupData(req);
+        validateSignupData(req);s
 
         const {firstName, lastName, emailId,password} = req.body;
 
@@ -98,7 +98,7 @@ app.post("/login", async(req,res)=>{
             res.send("User Login Successfull");
         }
         else{
-            throw new Error("Invalid Credentials");
+            throw new Error("Invalid Credentials");  
         }
 
     }

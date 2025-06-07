@@ -8,10 +8,10 @@ const validator = require('validator');
 const {userAuth} = require('./middlewares/auth');
 
 const {validateSignupData} = require('./utils/validator')
-const bcrypt = require('bcrypt');
+
 
 const cookieParser = require('cookie-parser');
-const jwt = require("jsonwebtoken");
+
 
 // middleware to convert JSON to Javascript object
 app.use(express.json());
@@ -67,7 +67,7 @@ app.post("/login", async(req,res)=>{
     try{
 
         const {emailId, password} = req.body;
-        console.log(emailId);
+        // console.log(emailId);
         if(!validator.isEmail(emailId)){
 
             throw new Error("Invalid Credentials");
@@ -75,21 +75,19 @@ app.post("/login", async(req,res)=>{
 
         // Check User is Present in Database then Password Check
         const  user = await User.findOne({emailId:emailId});
-        console.log(user);
+        // console.log(user);
         if(!user){
             throw new Error("Invalid Credentials");
         }
 
 
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const isPasswordValid = await user.validatePassword(password);
 
         if(isPasswordValid){
 
 
             // Create JWT TOKEN
-            const token = await jwt.sign({ _id : user._id},"DEV@TINDER$790",{
-                expiresIn: "1d"
-            });
+            const token = await  user.getJWT();
             console.log(token);
             // Send Token in cookies
 

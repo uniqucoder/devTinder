@@ -70,4 +70,22 @@ userRouter.get('/user/connections', userAuth, async (req,res)=>{
     }
 })
 
+
+// Feed API
+
+userRouter.get('/feed', userAuth, async (req,res)=>{
+    try{
+
+        // User see the can all except
+        // 1. own card
+        // 2. Card of his connection
+        // 3. status is ignored 
+        // 4.  
+
+
+    }
+    catch(err){
+        res.status(400).send("Error : "+ err.message );
+    }
+})
 module.exports = {userRouter};
